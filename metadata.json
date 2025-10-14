@@ -1,0 +1,5 @@
+{
+  "name": "Facebook Token Helper",
+  "description": "A helper tool to guide users in generating a Facebook access token by providing a safe script to run in the browser console.",
+  "requestFramePermissions": []
+}
