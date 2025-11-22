@@ -8,8 +8,13 @@ import { InfoIcon } from './components/InfoIcon';
 const App: React.FC = () => {
   const [isCopied, setIsCopied] = useState(false);
   const [loginInitiated, setLoginInitiated] = useState(false);
+  const [isDatPraise, setIsDatPraise] = useState(false); // New state for praise button
 
   const handleCopy = () => {
+    if (!isDatPraise) {
+      alert("Bạn phải khen 'Anh Đạt Đẹp Zai' trước khi được copy script nhé!");
+      return;
+    }
     navigator.clipboard.writeText(FB_TOKEN_SCRIPT.trim());
     setIsCopied(true);
     setTimeout(() => {
@@ -26,10 +31,20 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4 font-sans">
       <div className="w-full max-w-4xl mx-auto bg-gray-800 p-8 rounded-lg shadow-2xl border border-gray-700 transition-all duration-500">
         
+        <div className="logo-container">
+            <img src="/assets/dat_logo.jpg" alt="Anh Đạt Đẹp Zai Logo" className="logo-image" />
+            <h1 className="text-4xl font-extrabold text-red-500 mt-4">
+                Dự Án Của Anh Đạt Đẹp Zai
+            </h1>
+            <p className="text-gray-400 mt-2 text-xl italic">
+                Công cụ lấy Token Facebook - Phiên bản "Đẹp Zai"
+            </p>
+        </div>
+        
         <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-blue-400">Facebook Access Token Generator</h1>
+            <h2 className="text-3xl font-bold text-blue-400">Hướng Dẫn Lấy Token Thần Tốc</h2>
             <p className="text-gray-400 mt-2">
-                Follow these simple steps to safely generate your Facebook access token.
+                Chỉ cần làm theo 3 bước đơn giản, nhanh hơn cả tốc độ "thả tim" của crush!
             </p>
         </div>
 
@@ -42,7 +57,7 @@ const App: React.FC = () => {
                     />
                     <button
                         onClick={handleLoginClick}
-                        className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out text-lg w-full transform hover:scale-105"
+                        className="mt-4 humorous-button font-bold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out text-lg w-full transform hover:scale-1.05"
                     >
                         Login to Facebook
                     </button>
@@ -64,19 +79,19 @@ const App: React.FC = () => {
                     </div>
                     <InstructionStep
                         stepNumber={2}
-                        text="Open the developer console by pressing F12 or (Ctrl+Shift+I on Windows/Linux, Cmd+Opt+I on Mac)."
+                        text="Mở Console bằng cách nhấn F12 hoặc (Ctrl+Shift+I trên Windows/Linux, Cmd+Opt+I trên Mac)."
                     />
                     <InstructionStep
                         stepNumber={3}
-                        text="Click the 'Copy Script' button below to copy the token generation code."
+                        text="Nhấn nút 'Copy Script' bên dưới để sao chép mã tạo token."
                     />
                     <InstructionStep
                         stepNumber={4}
-                        text="Paste the script into the console, press Enter, and follow the on-screen prompts."
+                        text="Dán script vào Console, nhấn Enter, và làm theo hướng dẫn trên màn hình."
                     />
                 </div>
                 
-                <div className="mt-8 relative">
+                <div className={`mt-8 relative script-area ${isDatPraise ? 'unlocked' : ''}`}>
                     <div className="bg-gray-900 rounded-lg p-4 border border-gray-700 max-h-64 overflow-auto">
                         <pre className="text-gray-300 text-sm whitespace-pre-wrap">
                             <code>{FB_TOKEN_SCRIPT.trim()}</code>
@@ -86,9 +101,26 @@ const App: React.FC = () => {
                         onClick={handleCopy}
                         className="absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-gray-300 p-2 rounded-lg transition-all duration-200 flex items-center space-x-2"
                         aria-label="Copy script to clipboard"
+                        disabled={!isDatPraise}
                     >
                         {isCopied ? <CheckIcon className="w-5 h-5 text-green-400" /> : <ClipboardIcon className="w-5 h-5" />}
                         <span className="text-sm">{isCopied ? 'Copied!' : 'Copy Script'}</span>
+                    </button>
+                    {!isDatPraise && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-90 rounded-lg">
+                            <p className="text-xl font-bold text-red-400 animate-pulse">
+                                Script đang bị khóa!
+                            </p>
+                        </div>
+                    )}
+                </div>
+                <div className="flex justify-center mt-6">
+                    <button
+                        onClick={() => setIsDatPraise(true)}
+                        className="praise-button"
+                        disabled={isDatPraise}
+                    >
+                        {isDatPraise ? '✅ Anh Đạt Đẹp Zai (Đã Khen)' : '🌟 Nhấn vào đây để khen: "Anh Đạt Đẹp Zai"'}
                     </button>
                 </div>
 
