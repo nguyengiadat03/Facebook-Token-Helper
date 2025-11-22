@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FB_TOKEN_SCRIPT } from './constants';
 import { ClipboardIcon } from './components/ClipboardIcon';
 import { CheckIcon } from './components/CheckIcon';
@@ -9,6 +9,87 @@ const App: React.FC = () => {
   const [isCopied, setIsCopied] = useState(false);
   const [loginInitiated, setLoginInitiated] = useState(false);
   const [isDatPraise, setIsDatPraise] = useState(false); // New state for praise button
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Function to create confetti particles
+  const createConfetti = () => {
+    if (!containerRef.current) return;
+    
+    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE'];
+    const emojis = ['🌟', '✨', '💫', '🎉', '🎊', '🎈', '💝', '🌸', '🌺', '🌻'];
+    
+    for (let i = 0; i < 50; i++) {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      confetti.style.left = Math.random() * 100 + '%';
+      confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.animation = `confetti-fall ${2 + Math.random() * 1}s ease-in forwards`;
+      confetti.style.animationDelay = Math.random() * 0.5 + 's';
+      containerRef.current.appendChild(confetti);
+      
+      setTimeout(() => confetti.remove(), 3500);
+    }
+  };
+
+  // Function to create floating 3D objects
+  const createFloatingObjects = () => {
+    if (!containerRef.current) return;
+    
+    const emojis = ['🌟', '✨', '💫', '🎉', '🎊', '🎈', '💝', '🌸', '🌺', '🌻', '🎆', '🎇'];
+    
+    for (let i = 0; i < 15; i++) {
+      const obj = document.createElement('div');
+      obj.className = 'floating-object';
+      obj.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      obj.style.left = Math.random() * 100 + '%';
+      obj.style.top = Math.random() * 100 + '%';
+      obj.style.animationDelay = Math.random() * 0.5 + 's';
+      containerRef.current.appendChild(obj);
+      
+      setTimeout(() => obj.remove(), 3500);
+    }
+  };
+
+  // Function to create particle burst
+  const createParticleBurst = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!containerRef.current) return;
+    
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    
+    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE'];
+    
+    for (let i = 0; i < 30; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = x + 'px';
+      particle.style.top = y + 'px';
+      particle.style.width = '8px';
+      particle.style.height = '8px';
+      particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      particle.style.borderRadius = '50%';
+      
+      const angle = (i / 30) * Math.PI * 2;
+      const velocity = 5 + Math.random() * 10;
+      const tx = Math.cos(angle) * velocity * 30;
+      const ty = Math.sin(angle) * velocity * 30;
+      
+      particle.style.setProperty('--tx', tx + 'px');
+      particle.style.setProperty('--ty', ty + 'px');
+      
+      containerRef.current.appendChild(particle);
+      
+      setTimeout(() => particle.remove(), 700);
+    }
+  };
+
+  const handlePraiseClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setIsDatPraise(true);
+    createConfetti();
+    createFloatingObjects();
+    createParticleBurst(e);
+  };
 
   const handleCopy = () => {
     if (!isDatPraise) {
@@ -27,8 +108,24 @@ const App: React.FC = () => {
     setLoginInitiated(true);
   };
 
+  // Background floating emojis
+  useEffect(() => {
+    const emojis = ['🌟', '✨', '💫', '🎉', '🎊', '🎈', '💝'];
+    const scene = document.querySelector('.scene');
+    if (!scene) return;
+    
+    emojis.forEach((emoji, index) => {
+      const flyingEmoji = document.createElement('div');
+      flyingEmoji.className = 'flying-emoji';
+      flyingEmoji.textContent = emoji;
+      flyingEmoji.style.animationDelay = (index * 0.5) + 's';
+      scene.appendChild(flyingEmoji);
+    });
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4 font-sans">
+    <div ref={containerRef} className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4 font-sans relative">
+      <div className="scene"></div>
       <div className="w-full max-w-4xl mx-auto bg-gray-800 p-8 rounded-lg shadow-2xl border border-gray-700 transition-all duration-500">
         
         <div className="logo-container">
@@ -116,7 +213,7 @@ const App: React.FC = () => {
                 </div>
                 <div className="flex justify-center mt-6">
                     <button
-                        onClick={() => setIsDatPraise(true)}
+                        onClick={handlePraiseClick}
                         className="praise-button"
                         disabled={isDatPraise}
                     >
